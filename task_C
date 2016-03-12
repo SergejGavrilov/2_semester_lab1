@@ -1,0 +1,64 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+using namespace std;
+
+vector<int> answer;
+int w[1000];
+int c[1000];
+int a[1000][1000];
+
+void findAns(int k, int s){
+    if (a[k][s] == 0){
+        return;
+    }
+    if (a[k - 1][s] == a[k][s]){
+        findAns(k - 1, s);
+    }else{
+        findAns(k - 1, s - w[k]);
+        answer.push_back(k);
+    }
+}
+int main()
+{
+    int n, m, i, k, s;
+
+    ifstream in;
+    ofstream out;
+    in.open("knapsack.in", ios::in);
+    out.open("knapsack.out", ios::out);
+    in >> n >> m;
+
+    for (i = 1; i <= n; i++){
+        in >> w[i];
+    }
+    for (i = 1; i <= n; i++){
+        in >> c[i];
+        a[i][0] = 0;
+    }
+    for (i = 0; i < m; i++){
+        a[0][i] = 0;
+    }
+    for (k = 1; k <= n; k++){
+        for (s = 1; s <= m; s++){
+            if (s >= w[k]){
+                a[k][s] = max(a[k - 1][s], a[k - 1][s - w[k]] + c[k]);
+            }else{
+                a[k][s] = a[k - 1][s];
+            }
+        }
+    }
+ /*   for (k = 0; k < n; k++){
+        for (s = 0; s < m; s++){
+            cout << a[k][s] << "   ";
+        }
+        cout << endl;
+    }*/
+    findAns(n, m);
+    cout << answer.size() << endl;
+
+    for (i = 0; i < answer.size(); i++){
+        cout << answer[i] << " ";
+    }
+    return 0;
+}
